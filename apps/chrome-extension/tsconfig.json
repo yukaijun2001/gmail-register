@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "declaration": false,
+    "allowImportingTsExtensions": true
+  },
+  "include": [".wxt/wxt.d.ts", "entrypoints/**/*.ts", "entrypoints/**/*.tsx", "src/**/*.ts", "src/**/*.tsx", "wxt.config.ts"]
+}

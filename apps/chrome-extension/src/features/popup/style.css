@@ -1,0 +1,329 @@
+:root {
+  font-family: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  color: #2f3437;
+  background: #f7f6f3;
+  --ink: #2f3437;
+  --soft: #687074;
+  --paper: #fffefa;
+  --line: #dedbd3;
+  --green: #edf3ec;
+  --yellow: #fbf3db;
+  --red: #fdebec;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  width: 360px;
+  min-height: 440px;
+  background: #f7f6f3;
+}
+main {
+  min-height: 440px;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  height: 74px;
+  padding: 15px 18px;
+  color: #fffefa;
+  background: var(--ink);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed #777c7d;
+}
+header span {
+  font:
+    600 9px ui-monospace,
+    monospace;
+  color: #c8cbc5;
+  letter-spacing: 0.08em;
+}
+h1 {
+  font-family: 'Kaiti SC', 'STKaiti', 'Bradley Hand', 'Segoe Print', serif;
+  font-size: 21px;
+  margin: 3px 0 0;
+}
+button {
+  border: 1px solid #b8b4aa;
+  border-radius: 7px 5px 8px 6px;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 36px;
+  padding: 0 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+button:active {
+  transform: translateY(1px);
+}
+button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+.configuration {
+  padding: 15px 18px 13px;
+  border-bottom: 1px dashed var(--line);
+  background: #f2f0e9;
+}
+.configuration label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 650;
+}
+.configuration strong {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  font:
+    650 12px ui-monospace,
+    monospace;
+}
+.configuration input {
+  width: 100%;
+  height: 35px;
+  padding: 0 10px;
+  border: 1px solid #b8b4aa;
+  border-radius: 7px 5px 8px 6px;
+  background: var(--paper);
+  color: var(--ink);
+  font:
+    11px ui-monospace,
+    monospace;
+}
+.configuration input:focus {
+  outline: 3px solid #e1eadf;
+  border-color: var(--ink);
+}
+.configuration small {
+  display: block;
+  margin-top: 6px;
+  color: var(--soft);
+  font-size: 10px;
+}
+.identity {
+  padding: 17px 18px;
+  border-bottom: 1px dashed var(--line);
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  gap: 4px;
+  background: #f2f0e9;
+}
+label {
+  color: var(--soft);
+  font-size: 11px;
+}
+.identity strong {
+  font:
+    650 12px ui-monospace,
+    monospace;
+}
+.identity small {
+  grid-column: 2;
+  color: #757d77;
+}
+.error {
+  margin: 12px 18px 0;
+  padding: 9px 11px;
+  border-left: 3px solid #ae3d3d;
+  background: var(--red);
+  color: #7e2b2b;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.notice {
+  margin: 12px 18px 0;
+  padding: 9px 11px;
+  border-left: 3px solid #78917b;
+  background: var(--green);
+  color: #45624c;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.task {
+  margin: 16px 18px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 9px 6px 10px 7px;
+  background: var(--paper);
+  position: relative;
+  box-shadow: 3px 3px 0 #e8e4da;
+}
+.task-heading {
+  padding-right: 72px;
+}
+.account-preview .task-heading {
+  padding-right: 0;
+}
+.account-preview select {
+  display: block;
+  width: 100%;
+  height: 34px;
+  margin-top: 8px;
+  padding: 0 8px;
+  border: 1px solid #b8b4aa;
+  border-radius: 6px 5px 7px 5px;
+  background: var(--paper);
+  color: var(--ink);
+  font:
+    11px ui-monospace,
+    monospace;
+}
+.account-preview select:focus-visible {
+  outline: 3px solid #e1eadf;
+}
+.preview-note {
+  margin: 13px 0 0;
+  padding-top: 11px;
+  border-top: 1px dashed var(--line);
+  color: var(--soft);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.task strong {
+  display: block;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+  font:
+    650 13px ui-monospace,
+    monospace;
+}
+.status {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: var(--green);
+  color: #45624c;
+  font-size: 10px;
+}
+.status.paused {
+  background: var(--yellow);
+  color: #785719;
+}
+.task dl {
+  margin: 17px 0 0;
+  padding-top: 13px;
+  border-top: 1px dashed var(--line);
+}
+.task dl div {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+}
+.task dt {
+  color: var(--soft);
+  font-size: 11px;
+}
+.task dd {
+  margin: 0;
+  font:
+    11px ui-monospace,
+    monospace;
+}
+.account-details {
+  display: grid;
+  gap: 9px;
+}
+.account-details div {
+  align-items: flex-start;
+  gap: 16px;
+}
+.account-details dt {
+  flex: 0 0 68px;
+}
+.account-details dd {
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+.account-details .username-value {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 6px;
+}
+.username-value span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.username-value button {
+  flex: 0 0 25px;
+  width: 25px;
+  min-height: 25px;
+  padding: 0;
+}
+.task .task-meta {
+  margin-top: 13px;
+}
+.actions {
+  padding: 0 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.top-actions {
+  margin-top: 14px;
+}
+.primary {
+  color: #fffefa;
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.result {
+  margin: 15px 18px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.result span {
+  color: var(--soft);
+  font-size: 11px;
+  margin-right: auto;
+}
+.result button {
+  min-height: 31px;
+}
+.empty {
+  margin: auto 18px;
+  text-align: center;
+  color: #68716b;
+}
+.empty .primary {
+  margin: 9px auto;
+}
+.empty p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+footer {
+  margin-top: auto;
+  height: 48px;
+  padding: 0 18px;
+  border-top: 1px dashed var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #7b837e;
+  font-size: 10px;
+}
+footer button {
+  min-height: 28px;
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+  color: #4e5851;
+  font-size: 11px;
+}

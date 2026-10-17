@@ -1,0 +1,31 @@
+{
+  "name": "@gmail-manager/chrome-extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "postinstall": "wxt prepare",
+    "build": "wxt build",
+    "dev": "wxt",
+    "zip": "wxt zip",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@gmail-manager/contracts": "workspace:*",
+    "@wxt-dev/module-react": "1.1.4",
+    "@tabler/icons-react": "^3.35.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "wxt": "0.20.11",
+    "zod": "^4.1.12",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
+    "jsdom": "^27.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}

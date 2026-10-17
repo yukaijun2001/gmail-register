@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: gmail_manager
+      POSTGRES_USER: gmail_manager
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U gmail_manager -d gmail_manager']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api-server:
+    build:
+      context: .
+      dockerfile: infra/docker/api.Dockerfile
+    environment:
+      APP_ENV: production
+      APP_PORT: 3000
+      DATABASE_URL: postgresql://gmail_manager:${POSTGRES_PASSWORD:-local-development-only}@postgres:5432/gmail_manager?schema=public
+      ADMIN_ORIGIN: http://localhost:1001
+      LEASE_DURATION_SECONDS: ${LEASE_DURATION_SECONDS:-180}
+      HEARTBEAT_TIMEOUT_SECONDS: ${HEARTBEAT_TIMEOUT_SECONDS:-180}
+    ports:
+      - '3000:3000'
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -q --spider http://127.0.0.1:3000/api/v1/health']
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  admin-web:
+    build:
+      context: .
+      dockerfile: infra/docker/admin.Dockerfile
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -q --spider http://127.0.0.1/']
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    depends_on:
+      api-server:
+        condition: service_healthy
+
+  reverse-proxy:
+    image: nginx:1.29-alpine
+    ports:
+      - '1001:80'
+    volumes:
+      - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      admin-web:
+        condition: service_healthy
+      api-server:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

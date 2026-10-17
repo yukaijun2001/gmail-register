@@ -1,0 +1,29 @@
+{
+  "name": "gmail-registration-manager",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.12.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "db:generate": "pnpm --filter @gmail-manager/api-server prisma:generate",
+    "db:migrate": "pnpm --filter @gmail-manager/api-server prisma:migrate",
+    "db:seed": "pnpm --filter @gmail-manager/api-server prisma:seed",
+    "docker:start": "bash scripts/service.sh --start",
+    "docker:stop": "bash scripts/service.sh --stop",
+    "docker:restart": "bash scripts/service.sh --restart",
+    "docker:status": "bash scripts/service.sh --status",
+    "docker:logs": "bash scripts/service.sh --logs"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.8",
+    "typescript": "^5.9.3"
+  }
+}

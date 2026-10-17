@@ -1,0 +1,201 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  OPERATOR
+  REVIEWER
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum Gender {
+  FEMALE
+  MALE
+  OTHER
+  UNDISCLOSED
+}
+
+enum ConsentStatus {
+  GRANTED
+  REVOKED
+}
+
+enum WorkerStatus {
+  IDLE
+  BUSY
+  PAUSED
+  OFFLINE
+}
+
+enum TaskStatus {
+  PENDING
+  CLAIMED
+  RUNNING
+  WAITING_USER
+  PAUSED
+  AUTO_VERIFICATION
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+enum RegistrationStep {
+  OPEN_SIGNUP
+  PERSONAL_INFO
+  BIRTHDAY_GENDER
+  USERNAME
+  PASSWORD
+  PHONE_VERIFICATION
+  ADDITIONAL_VERIFICATION
+  REVIEW
+  RESULT_CONFIRMATION
+}
+
+enum VerificationType {
+  PHONE
+  CAPTCHA
+  ADDITIONAL_IDENTITY
+  OTHER
+}
+
+enum VerificationStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  EXPIRED
+  FAILED
+}
+
+model User {
+  id           String     @id @default(uuid()) @db.Uuid
+  username     String     @unique
+  passwordHash String     @map("password_hash")
+  role         UserRole   @default(OPERATOR)
+  status       UserStatus @default(ACTIVE)
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime   @updatedAt @map("updated_at") @db.Timestamptz(3)
+  auditLogs    AuditLog[]
+
+  @@map("users")
+}
+
+model Account {
+  id              String        @id @default(uuid()) @db.Uuid
+  firstName       String        @map("first_name")
+  lastName        String        @map("last_name")
+  birthday        DateTime      @db.Date
+  gender          Gender
+  desiredUsername String        @unique @map("desired_username")
+  password        String
+  phoneReference  String        @map("phone_reference")
+  recoveryEmail   String?       @map("recovery_email")
+  consentStatus   ConsentStatus @map("consent_status")
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+  tasks           Task[]
+
+  @@map("accounts")
+}
+
+model Worker {
+  id                String       @id @default(uuid()) @db.Uuid
+  deviceName        String       @map("device_name")
+  profileIdentifier String       @unique @map("profile_identifier")
+  extensionVersion  String       @map("extension_version")
+  tokenHash         String       @unique @map("token_hash")
+  status            WorkerStatus @default(IDLE)
+  isEnabled         Boolean      @default(true) @map("is_enabled")
+  currentTaskId     String?      @unique @map("current_task_id") @db.Uuid
+  lastHeartbeatAt   DateTime?    @map("last_heartbeat_at") @db.Timestamptz(3)
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  tasks             Task[]       @relation("TaskWorker")
+  events            TaskEvent[]
+
+  @@index([status, lastHeartbeatAt])
+  @@map("workers")
+}
+
+model Task {
+  id             String                @id @default(uuid()) @db.Uuid
+  accountId      String                @map("account_id") @db.Uuid
+  workerId       String?               @map("worker_id") @db.Uuid
+  status         TaskStatus            @default(PENDING)
+  currentStep    RegistrationStep      @default(OPEN_SIGNUP) @map("current_step")
+  priority       Int                   @default(0)
+  leaseTokenHash String?               @map("lease_token_hash")
+  leaseVersion   Int                   @default(0) @map("lease_version")
+  leaseExpiresAt DateTime?             @map("lease_expires_at") @db.Timestamptz(3)
+  startedAt      DateTime?             @map("started_at") @db.Timestamptz(3)
+  completedAt    DateTime?             @map("completed_at") @db.Timestamptz(3)
+  failureCode    String?               @map("failure_code")
+  failureMessage String?               @map("failure_message")
+  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime              @updatedAt @map("updated_at") @db.Timestamptz(3)
+  account        Account               @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  worker         Worker?               @relation("TaskWorker", fields: [workerId], references: [id], onDelete: SetNull)
+  events         TaskEvent[]
+  verification   VerificationSession[]
+
+  @@index([status, priority, createdAt])
+  @@index([workerId, status])
+  @@map("tasks")
+}
+
+model TaskEvent {
+  id             String            @id @default(uuid()) @db.Uuid
+  taskId         String            @map("task_id") @db.Uuid
+  workerId       String?           @map("worker_id") @db.Uuid
+  idempotencyKey String?           @unique @map("idempotency_key") @db.Uuid
+  eventType      String            @map("event_type")
+  step           RegistrationStep?
+  message        String?
+  metadata       Json?
+  createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  task           Task              @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  worker         Worker?           @relation(fields: [workerId], references: [id], onDelete: SetNull)
+
+  @@index([taskId, createdAt])
+  @@map("task_events")
+}
+
+model VerificationSession {
+  id               String             @id @default(uuid()) @db.Uuid
+  taskId           String             @map("task_id") @db.Uuid
+  phoneReference   String?            @map("phone_reference")
+  provider         String
+  verificationType VerificationType   @map("verification_type")
+  status           VerificationStatus @default(PENDING)
+  expiresAt        DateTime           @map("expires_at") @db.Timestamptz(3)
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
+  task             Task               @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([status, expiresAt])
+  @@map("verification_sessions")
+}
+
+model AuditLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  actorId      String?  @map("actor_id") @db.Uuid
+  action       String
+  resourceType String   @map("resource_type")
+  resourceId   String?  @map("resource_id")
+  result       String
+  metadata     Json?
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  actor        User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([resourceType, resourceId, createdAt])
+  @@map("audit_logs")
+}

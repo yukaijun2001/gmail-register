@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.output/
+.turbo/
+.wxt/
+.env
+.env.*
+!.env.example
+coverage/
+*.log
+*.tsbuildinfo
+.DS_Store
+apps/api-server/prisma/dev.db*
